@@ -1,0 +1,21 @@
+---
+- name: Create MongoDB database and user
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create MongoDB database and user
+      shell: |
+        mongo <<EOF
+        use dbname
+        db.createUser({
+          user: "mongouser",
+          pwd: "mongopassword",
+          roles: [
+            { role: "readWrite", db: "dbname" }
+          ]
+        })
+        EOF
+      register: mongo_user_creation
+
+    - debug:
+        msg: "MongoDB user creation output: {{ mongo_user_creation.stdout }}"

@@ -1,0 +1,10 @@
+---
+- name: Create directory on remote host
+  hosts: all
+  become: yes  # Use this if you need sudo privileges
+  tasks:
+    - name: Ensure directory exists
+      file:
+        path: /home/mobile-dev-backend/domainame
+        state: directory
+        mode: '0777' 

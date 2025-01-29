@@ -1,0 +1,42 @@
+---
+- name: package installation
+  hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: false
+  tasks:
+    
+    - name: VHOST add
+      become: true
+      shell: |
+         cat << EOF >> /etc/apache2/sites-available/domainame.conf
+         
+         <VirtualHost *:80>
+         ServerName domainame-backend.maticz.in
+         DocumentRoot /var/www/html/domainame
+         ErrorLog ${APACHE_LOG_DIR}/error.log
+         CustomLog ${APACHE_LOG_DIR}/access.log combined
+         <Directory /var/www/html/domainame>
+         Options Indexes FollowSymLinks
+         AllowOverride All
+         Require all granted
+         Allow from domainame-backend.maticz.in
+         </Directory>
+         <Proxy *>
+         Order deny,allow
+         Allow from all
+         </Proxy>
+         ProxyRequests Off
+         ProxyPreserveHost On
+
+         ProxyPass / http://127.0.0.1:port/
+         ProxyPassReverse / http://127.0.0.1:port/
+         
+         </VirtualHost>
+         EOF
+         
+      register: SEQOUT
+
+    - debug: msg={{SEQOUT.stdout_lines}}
+...

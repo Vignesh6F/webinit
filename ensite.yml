@@ -1,0 +1,35 @@
+---
+- name: Enable Apache site and restart service
+  hosts: all
+  become: yes
+  tasks:
+    - name: Enable the Apache site
+      command: a2ensite domainame.conf  # Replace with your actual site configuration
+      register: a2ensite_result
+      ignore_errors: yes
+
+    - debug:
+        msg: "Output of a2ensite: {{ a2ensite_result.stdout }}"
+
+    - name: Validate Apache configuration
+      command: apachectl configtest
+      register: configtest_result
+      ignore_errors: yes  # Continue even if this fails
+
+    - debug:
+        msg: "Apache config test output: {{ configtest_result.stdout }}\nError output: {{ configtest_result.stderr }}"
+
+
+    - name: Reload Apache service using shell command
+      shell: |
+        if sudo systemctl reload apache2; then
+          echo "Apache reloaded successfully."
+        else
+          echo "Failed to reload Apache."
+          exit 1
+        fi
+      when: a2ensite_result.changed  # Reload only if the site was enabled
+
+    - name: Additional confirmation
+      debug:
+        msg: "Apache site enabled and service reloaded."
