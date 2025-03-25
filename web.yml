@@ -40,3 +40,10 @@
 
     - debug: msg={{SEQOUT.stdout_lines}}
 ...
+
+
+
+For Macs without T2 chip:
+Shut down your Mac.
+Press and hold Shift + Control + Option (on the left side) + power button for 10 seconds.
+Release all keys, wait a few seconds, and press the power button again to turn on your Mac.
